@@ -1,0 +1,18 @@
+body{
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(109.1deg, rgb(181, 73, 91) 7.1%, rgb(225, 107, 140) 86.4%);
+    overflow: hidden;
+}
+.loveletter{
+    font-family: 'Love Light', cursive;
+    line-height: 1.6;
+    font-size: 35px;
+}
+.loveletter h3{
+    text-align: right;
+}
