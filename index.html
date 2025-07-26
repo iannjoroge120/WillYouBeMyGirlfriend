@@ -1,10 +1,10 @@
-improve this logic , it does not make much sense , improve the game to something logical <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <title>Find The Hidden Message 💕</title>
+    <title>Heart Pattern Puzzle 💕</title>
     <style>
         * {
             margin: 0;
@@ -43,110 +43,161 @@ improve this logic , it does not make much sense , improve the game to something
         }
 
         .game-subtitle {
-            font-size: clamp(1rem, 3vw, 1.3rem);
+            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
             opacity: 0.9;
+            max-width: 600px;
+            line-height: 1.4;
+        }
+
+        .level-info {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        .info-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 12px 20px;
+            border-radius: 15px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            text-align: center;
+        }
+
+        .info-number {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: #feca57;
+        }
+
+        .info-label {
+            font-size: 0.8rem;
+            opacity: 0.8;
+        }
+
+        .clue-section {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 30px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            max-width: 500px;
+            text-align: center;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+        }
+
+        .clue-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #feca57;
+        }
+
+        .clue-text {
+            font-size: 1rem;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .clue-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            max-width: 200px;
+            margin: 0 auto;
+        }
+
+        .clue-cell {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 8px;
+            font-size: 1.2rem;
+            border: 1px solid rgba(255, 255, 255, 0.3);
         }
 
         .puzzle-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 15px;
-            max-width: 400px;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 12px;
+            max-width: 420px;
             width: 100%;
             margin-bottom: 30px;
         }
 
-        .puzzle-piece {
+        .puzzle-cell {
             aspect-ratio: 1;
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(10px);
-            border-radius: 15px;
+            border-radius: 12px;
             border: 2px solid rgba(255, 255, 255, 0.2);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: clamp(1.5rem, 4vw, 2rem);
+            font-size: 1.8rem;
             cursor: pointer;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
         }
 
-        .puzzle-piece:hover {
+        .puzzle-cell:hover {
             transform: scale(1.05);
             background: rgba(255, 255, 255, 0.2);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
         }
 
-        .puzzle-piece.found {
+        .puzzle-cell.revealed {
             background: linear-gradient(135deg, #56ab2f, #a8e6cf);
-            transform: scale(1.1);
-            animation: foundPulse 0.5s ease-out;
+            transform: scale(1.02);
+            animation: revealPulse 0.6s ease-out;
         }
 
-        .puzzle-piece.wrong {
-            background: linear-gradient(135deg, #ff6b6b, #ffa500);
+        .puzzle-cell.heart {
+            background: linear-gradient(135deg, #ff6b6b, #ff8a80);
+            animation: heartFound 0.8s ease-out;
+        }
+
+        .puzzle-cell.wrong {
+            background: linear-gradient(135deg, #ff5722, #ff8a65);
             animation: shake 0.5s ease-out;
         }
 
-        .progress-bar {
-            width: 100%;
-            max-width: 400px;
-            height: 10px;
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 5px;
-            margin-bottom: 20px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #56ab2f, #a8e6cf);
-            width: 0%;
-            transition: width 0.5s ease-out;
-            border-radius: 5px;
-        }
-
-        .game-stats {
+        .controls {
             display: flex;
-            gap: 30px;
-            margin-bottom: 30px;
+            gap: 15px;
+            margin-bottom: 20px;
             flex-wrap: wrap;
             justify-content: center;
         }
 
-        .stat {
-            text-align: center;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 15px 25px;
-            border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
         }
 
-        .stat-number {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #feca57;
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
         }
 
-        .stat-label {
-            font-size: 0.9rem;
-            opacity: 0.8;
-        }
-
-        .hint {
-            text-align: center;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            max-width: 500px;
-            animation: pulse 2s ease-in-out infinite;
+        .btn.primary {
+            background: linear-gradient(135deg, #56ab2f, #a8e6cf);
         }
 
         .completion-modal {
@@ -167,16 +218,16 @@ improve this logic , it does not make much sense , improve the game to something
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(20px);
             border-radius: 25px;
-            padding: 50px;
+            padding: 40px;
             text-align: center;
             border: 2px solid rgba(255, 255, 255, 0.2);
-            max-width: 600px;
+            max-width: 500px;
             width: 90%;
             animation: modalAppear 0.8s ease-out;
         }
 
         .modal-title {
-            font-size: clamp(2rem, 5vw, 3rem);
+            font-size: 2.5rem;
             font-weight: 700;
             margin-bottom: 20px;
             background: linear-gradient(45deg, #ff6b6b, #feca57);
@@ -186,34 +237,20 @@ improve this logic , it does not make much sense , improve the game to something
         }
 
         .modal-message {
-            font-size: clamp(1.2rem, 3vw, 1.5rem);
-            margin-bottom: 40px;
+            font-size: 1.2rem;
+            margin-bottom: 30px;
             line-height: 1.4;
         }
 
         .modal-buttons {
             display: flex;
-            gap: 20px;
+            gap: 15px;
             justify-content: center;
             flex-wrap: wrap;
         }
 
-        .btn {
-            padding: 15px 30px;
-            border: none;
-            border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            text-decoration: none;
-            cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            min-width: 120px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-        }
-
         .yes {
             background: linear-gradient(135deg, #56ab2f, #a8e6cf);
-            color: white;
             animation: heartbeat 2s infinite;
         }
 
@@ -224,21 +261,10 @@ improve this logic , it does not make much sense , improve the game to something
 
         .no {
             background: linear-gradient(135deg, #ff6b6b, #ffa500);
-            color: white;
         }
 
         .no:hover {
             transform: scale(0.95);
-        }
-
-        .confetti {
-            position: fixed;
-            width: 10px;
-            height: 10px;
-            background: #feca57;
-            pointer-events: none;
-            z-index: 999;
-            animation: confettiFall 3s linear forwards;
         }
 
         /* Animations */
@@ -247,21 +273,24 @@ improve this logic , it does not make much sense , improve the game to something
             50% { background-position: 100% 50%; }
         }
 
-        @keyframes foundPulse {
+        @keyframes revealPulse {
             0% { transform: scale(1); }
-            50% { transform: scale(1.2); }
-            100% { transform: scale(1.1); }
+            50% { transform: scale(1.15); }
+            100% { transform: scale(1.02); }
+        }
+
+        @keyframes heartFound {
+            0% { transform: scale(1); }
+            25% { transform: scale(1.2) rotate(-5deg); }
+            50% { transform: scale(1.3) rotate(5deg); }
+            75% { transform: scale(1.1) rotate(-2deg); }
+            100% { transform: scale(1.02) rotate(0deg); }
         }
 
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-5px); }
-            75% { transform: translateX(5px); }
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 1; }
-            50% { transform: scale(1.02); opacity: 0.9; }
+            25% { transform: translateX(-8px); }
+            75% { transform: translateX(8px); }
         }
 
         @keyframes fadeIn {
@@ -288,30 +317,23 @@ improve this logic , it does not make much sense , improve the game to something
             70% { transform: scale(1); }
         }
 
-        @keyframes confettiFall {
-            0% {
-                transform: translateY(-100vh) rotate(0deg);
-                opacity: 1;
-            }
-            100% {
-                transform: translateY(100vh) rotate(720deg);
-                opacity: 0;
-            }
-        }
-
         /* Responsive Design */
-        @media (max-width: 480px) {
+        @media (max-width: 600px) {
             .puzzle-grid {
-                gap: 10px;
+                gap: 8px;
                 max-width: 350px;
             }
 
-            .game-stats {
-                gap: 15px;
+            .level-info {
+                gap: 10px;
             }
 
-            .stat {
-                padding: 10px 15px;
+            .info-card {
+                padding: 8px 15px;
+            }
+
+            .clue-section {
+                padding: 20px 15px;
             }
 
             .modal-content {
@@ -324,7 +346,7 @@ improve this logic , it does not make much sense , improve the game to something
             }
 
             .btn {
-                width: 80%;
+                width: 100%;
                 max-width: 200px;
             }
         }
@@ -332,77 +354,129 @@ improve this logic , it does not make much sense , improve the game to something
 </head>
 <body>
     <div class="game-container">
-        <h1 class="game-title">Find My Heart 💕</h1>
-        <p class="game-subtitle">Click the hearts to reveal a special message for Leila!</p>
+        <h1 class="game-title">Heart Pattern Puzzle 💕</h1>
+        <p class="game-subtitle">Use logic and pattern recognition to find all the hearts! Each level gives you clues about where hearts are hidden.</p>
         
-        <div class="progress-bar">
-            <div class="progress-fill" id="progressFill"></div>
+        <div class="level-info">
+            <div class="info-card">
+                <div class="info-number" id="currentLevel">1</div>
+                <div class="info-label">Level</div>
+            </div>
+            <div class="info-card">
+                <div class="info-number" id="heartsFound">0</div>
+                <div class="info-label">Hearts Found</div>
+            </div>
+            <div class="info-card">
+                <div class="info-number" id="totalHearts">4</div>
+                <div class="info-label">Hearts Hidden</div>
+            </div>
+            <div class="info-card">
+                <div class="info-number" id="attempts">0</div>
+                <div class="info-label">Attempts</div>
+            </div>
         </div>
         
-        <div class="game-stats">
-            <div class="stat">
-                <div class="stat-number" id="foundCount">0</div>
-                <div class="stat-label">Hearts Found</div>
-            </div>
-            <div class="stat">
-                <div class="stat-number" id="totalCount">8</div>
-                <div class="stat-label">Total Hearts</div>
-            </div>
-            <div class="stat">
-                <div class="stat-number" id="attempts">0</div>
-                <div class="stat-label">Attempts</div>
-            </div>
-        </div>
-        
-        <div class="hint" id="hint">
-            💡 Hint: Look for the symbols that represent love and happiness!
+        <div class="clue-section">
+            <div class="clue-title">🔍 Pattern Clue</div>
+            <div class="clue-text" id="clueText">Hearts are hidden in corners of the grid</div>
+            <div class="clue-grid" id="clueGrid"></div>
         </div>
         
         <div class="puzzle-grid" id="puzzleGrid"></div>
+        
+        <div class="controls">
+            <button class="btn" onclick="game.showHint()">💡 Hint</button>
+            <button class="btn" onclick="game.resetLevel()">🔄 Reset Level</button>
+            <button class="btn primary" onclick="game.checkSolution()">✓ Check Solution</button>
+        </div>
     </div>
 
     <!-- Completion Modal -->
     <div class="completion-modal" id="completionModal">
         <div class="modal-content">
-            <h2 class="modal-title">Congratulations! 🎉</h2>
-            <p class="modal-message">
-                You found all the hearts and unlocked the secret message!<br><br>
-                <strong>"Leila, you have captured my heart completely. Will you be my girlfriend?"</strong>
+            <h2 class="modal-title">Amazing! 🎉</h2>
+            <p class="modal-message" id="modalMessage">
+                You've solved all the puzzles with your brilliant mind!<br><br>
+                <strong>"Leila, just like these puzzles, you make me think, smile, and feel complete. Will you be my girlfriend?"</strong>
             </p>
             <div class="modal-buttons">
-                <a class="btn yes" href="letter.html" target="_blank">Yes! I'd love to! ❤️</a>
-                <a class="btn no" href="no.html" target="_blank">Let me think about it 💭</a>
+                <button class="btn yes" onclick="celebrateYes()">Yes! I'd love to! ❤️</button>
+                <button class="btn no" onclick="window.open('no.html', '_blank')">Let me think about it 💭</button>
             </div>
         </div>
     </div>
 
     <script>
-        class HeartHuntGame {
+        class HeartPatternGame {
             constructor() {
-                this.gridSize = 16;
-                this.totalHearts = 8;
-                this.foundHearts = 0;
+                this.currentLevel = 1;
+                this.maxLevel = 5;
+                this.gridSize = 36; // 6x6 grid
                 this.attempts = 0;
-                this.heartPositions = new Set();
+                this.heartsFound = 0;
                 this.gameComplete = false;
+                this.hintsUsed = 0;
                 
-                this.emojis = ['🌟', '⭐', '✨', '💫', '🎈', '🎯', '🎪', '🎨', '🎭', '🎪', '🌸', '🌺', '🌻', '🌷'];
-                this.hearts = ['❤️', '💕', '💖', '💗', '💘', '💝', '💞', '💟'];
+                this.levels = [
+                    {
+                        hearts: [0, 5, 30, 35], // Corners
+                        clue: "Hearts are hidden in the four corners of the grid",
+                        cluePattern: [
+                            '❤️', '', '', '❤️',
+                            '', '', '', '',
+                            '', '', '', '',
+                            '❤️', '', '', '❤️'
+                        ]
+                    },
+                    {
+                        hearts: [7, 10, 25, 28], // Plus pattern center
+                        clue: "Hearts form a perfect plus (+) sign in the center",
+                        cluePattern: [
+                            '', '❤️', '', '',
+                            '❤️', '❤️', '❤️', '',
+                            '', '❤️', '', '',
+                            '', '', '', ''
+                        ]
+                    },
+                    {
+                        hearts: [1, 4, 31, 34], // Diamond pattern
+                        clue: "Hearts create a diamond shape when connected",
+                        cluePattern: [
+                            '', '❤️', '', '',
+                            '', '', '', '',
+                            '', '', '', '',
+                            '❤️', '', '❤️', ''
+                        ]
+                    },
+                    {
+                        hearts: [14, 15, 20, 21], // 2x2 square center
+                        clue: "Hearts form a perfect 2×2 square in the center",
+                        cluePattern: [
+                            '', '', '', '',
+                            '', '❤️', '❤️', '',
+                            '', '❤️', '❤️', '',
+                            '', '', '', ''
+                        ]
+                    },
+                    {
+                        hearts: [6, 11, 24, 29], // X pattern
+                        clue: "Hearts form an X pattern across the grid",
+                        cluePattern: [
+                            '', '❤️', '', '❤️',
+                            '', '', '', '',
+                            '', '', '', '',
+                            '❤️', '', '❤️', ''
+                        ]
+                    }
+                ];
                 
                 this.init();
             }
             
             init() {
-                this.generateHeartPositions();
                 this.createGrid();
                 this.updateStats();
-            }
-            
-            generateHeartPositions() {
-                while (this.heartPositions.size < this.totalHearts) {
-                    const position = Math.floor(Math.random() * this.gridSize);
-                    this.heartPositions.add(position);
-                }
+                this.showLevelClue();
             }
             
             createGrid() {
@@ -410,140 +484,179 @@ improve this logic , it does not make much sense , improve the game to something
                 grid.innerHTML = '';
                 
                 for (let i = 0; i < this.gridSize; i++) {
-                    const piece = document.createElement('div');
-                    piece.className = 'puzzle-piece';
-                    piece.dataset.index = i;
+                    const cell = document.createElement('div');
+                    cell.className = 'puzzle-cell';
+                    cell.dataset.index = i;
+                    cell.innerHTML = '?';
                     
-                    if (this.heartPositions.has(i)) {
-                        piece.dataset.isHeart = 'true';
-                        piece.innerHTML = this.getRandomEmoji();
-                    } else {
-                        piece.innerHTML = this.getRandomEmoji();
-                    }
-                    
-                    piece.addEventListener('click', () => this.handlePieceClick(piece));
-                    grid.appendChild(piece);
+                    cell.addEventListener('click', () => this.handleCellClick(cell, i));
+                    grid.appendChild(cell);
                 }
             }
             
-            getRandomEmoji() {
-                return this.emojis[Math.floor(Math.random() * this.emojis.length)];
-            }
-            
-            handlePieceClick(piece) {
-                if (this.gameComplete || piece.classList.contains('found')) return;
+            handleCellClick(cell, index) {
+                if (this.gameComplete || cell.classList.contains('revealed')) return;
                 
                 this.attempts++;
+                const currentLevel = this.levels[this.currentLevel - 1];
                 
-                if (piece.dataset.isHeart === 'true') {
-                    this.foundHeart(piece);
+                if (currentLevel.hearts.includes(index)) {
+                    cell.classList.add('revealed', 'heart');
+                    cell.innerHTML = '❤️';
+                    this.heartsFound++;
+                    this.playFoundSound();
+                    
+                    if (this.heartsFound === currentLevel.hearts.length) {
+                        setTimeout(() => this.completeLevel(), 800);
+                    }
                 } else {
-                    this.wrongPiece(piece);
+                    cell.classList.add('wrong');
+                    cell.innerHTML = '💔';
+                    this.playWrongSound();
+                    
+                    setTimeout(() => {
+                        cell.classList.remove('wrong');
+                        cell.innerHTML = '?';
+                    }, 1000);
                 }
                 
                 this.updateStats();
-                this.updateHint();
+            }
+            
+            showLevelClue() {
+                const currentLevel = this.levels[this.currentLevel - 1];
+                document.getElementById('clueText').textContent = currentLevel.clue;
                 
-                if (this.foundHearts === this.totalHearts) {
-                    setTimeout(() => this.completeGame(), 500);
+                const clueGrid = document.getElementById('clueGrid');
+                clueGrid.innerHTML = '';
+                
+                currentLevel.cluePattern.forEach(symbol => {
+                    const cell = document.createElement('div');
+                    cell.className = 'clue-cell';
+                    cell.innerHTML = symbol || '·';
+                    clueGrid.appendChild(cell);
+                });
+            }
+            
+            showHint() {
+                if (this.hintsUsed >= 2) {
+                    alert('No more hints available for this level!');
+                    return;
                 }
-            }
-            
-            foundHeart(piece) {
-                piece.classList.add('found');
-                piece.innerHTML = this.hearts[this.foundHearts];
-                this.foundHearts++;
                 
-                this.createHeartExplosion(piece);
-                this.playFoundSound();
-            }
-            
-            wrongPiece(piece) {
-                piece.classList.add('wrong');
-                setTimeout(() => {
-                    piece.classList.remove('wrong');
-                }, 500);
+                const currentLevel = this.levels[this.currentLevel - 1];
+                const unrevealedHearts = currentLevel.hearts.filter(index => {
+                    const cell = document.querySelector(`[data-index="${index}"]`);
+                    return !cell.classList.contains('revealed');
+                });
                 
-                this.playWrongSound();
-            }
-            
-            createHeartExplosion(piece) {
-                const rect = piece.getBoundingClientRect();
-                const centerX = rect.left + rect.width / 2;
-                const centerY = rect.top + rect.height / 2;
-                
-                for (let i = 0; i < 8; i++) {
+                if (unrevealedHearts.length > 0) {
+                    const hintIndex = unrevealedHearts[Math.floor(Math.random() * unrevealedHearts.length)];
+                    const hintCell = document.querySelector(`[data-index="${hintIndex}"]`);
+                    
+                    hintCell.style.background = 'linear-gradient(135deg, #feca57, #ff9ff3)';
+                    hintCell.innerHTML = '💡';
+                    
                     setTimeout(() => {
-                        const miniHeart = document.createElement('div');
-                        miniHeart.innerHTML = '💕';
-                        miniHeart.style.position = 'fixed';
-                        miniHeart.style.left = centerX + 'px';
-                        miniHeart.style.top = centerY + 'px';
-                        miniHeart.style.fontSize = '1rem';
-                        miniHeart.style.pointerEvents = 'none';
-                        miniHeart.style.zIndex = '1000';
-                        miniHeart.style.animation = 'heartExplode 1s ease-out forwards';
-                        
-                        const angle = (360 / 8) * i;
-                        miniHeart.style.setProperty('--angle', angle + 'deg');
-                        
-                        document.body.appendChild(miniHeart);
-                        
-                        setTimeout(() => miniHeart.remove(), 1000);
-                    }, i * 50);
+                        hintCell.style.background = '';
+                        hintCell.innerHTML = '?';
+                    }, 3000);
+                    
+                    this.hintsUsed++;
                 }
             }
             
-            updateStats() {
-                document.getElementById('foundCount').textContent = this.foundHearts;
-                document.getElementById('attempts').textContent = this.attempts;
+            checkSolution() {
+                const currentLevel = this.levels[this.currentLevel - 1];
+                const revealedCells = document.querySelectorAll('.puzzle-cell.revealed');
                 
-                const progress = (this.foundHearts / this.totalHearts) * 100;
-                document.getElementById('progressFill').style.width = progress + '%';
+                if (revealedCells.length === currentLevel.hearts.length) {
+                    this.completeLevel();
+                } else {
+                    alert(`Find ${currentLevel.hearts.length - revealedCells.length} more hearts!`);
+                }
             }
             
-            updateHint() {
-                const hints = [
-                    "💡 Hint: Look for the symbols that represent love and happiness!",
-                    "🔍 You're doing great! Keep looking for more hearts!",
-                    "✨ Amazing! You're more than halfway there!",
-                    "🎯 So close! Just a few more hearts to find!",
-                    "🏆 Almost there! You've got this!"
-                ];
-                
-                const hintIndex = Math.min(Math.floor(this.foundHearts / 2), hints.length - 1);
-                document.getElementById('hint').textContent = hints[hintIndex];
+            completeLevel() {
+                if (this.currentLevel >= this.maxLevel) {
+                    this.completeGame();
+                } else {
+                    setTimeout(() => {
+                        this.currentLevel++;
+                        this.heartsFound = 0;
+                        this.hintsUsed = 0;
+                        this.createGrid();
+                        this.updateStats();
+                        this.showLevelClue();
+                        this.createLevelCompleteEffect();
+                    }, 1500);
+                }
             }
             
             completeGame() {
                 this.gameComplete = true;
-                this.createConfetti();
                 setTimeout(() => {
                     document.getElementById('completionModal').style.display = 'flex';
+                    this.createConfetti();
                 }, 1000);
+            }
+            
+            resetLevel() {
+                this.heartsFound = 0;
+                this.hintsUsed = 0;
+                this.createGrid();
+                this.updateStats();
+            }
+            
+            updateStats() {
+                document.getElementById('currentLevel').textContent = this.currentLevel;
+                document.getElementById('heartsFound').textContent = this.heartsFound;
+                document.getElementById('totalHearts').textContent = this.levels[this.currentLevel - 1].hearts.length;
+                document.getElementById('attempts').textContent = this.attempts;
+            }
+            
+            createLevelCompleteEffect() {
+                const effects = ['🎉', '⭐', '✨', '💫', '🌟'];
+                for (let i = 0; i < 15; i++) {
+                    setTimeout(() => {
+                        const effect = document.createElement('div');
+                        effect.innerHTML = effects[Math.floor(Math.random() * effects.length)];
+                        effect.style.position = 'fixed';
+                        effect.style.left = Math.random() * 100 + '%';
+                        effect.style.top = Math.random() * 100 + '%';
+                        effect.style.fontSize = '2rem';
+                        effect.style.pointerEvents = 'none';
+                        effect.style.zIndex = '999';
+                        effect.style.animation = 'levelComplete 2s ease-out forwards';
+                        
+                        document.body.appendChild(effect);
+                        setTimeout(() => effect.remove(), 2000);
+                    }, i * 100);
+                }
             }
             
             createConfetti() {
                 const colors = ['#ff6b6b', '#feca57', '#48dbfb', '#ff9ff3', '#56ab2f'];
-                
-                for (let i = 0; i < 100; i++) {
+                for (let i = 0; i < 50; i++) {
                     setTimeout(() => {
                         const confetti = document.createElement('div');
-                        confetti.className = 'confetti';
+                        confetti.style.position = 'fixed';
                         confetti.style.left = Math.random() * 100 + '%';
+                        confetti.style.top = '-10px';
+                        confetti.style.width = '10px';
+                        confetti.style.height = '10px';
                         confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-                        confetti.style.animationDelay = Math.random() * 2 + 's';
-                        confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+                        confetti.style.pointerEvents = 'none';
+                        confetti.style.zIndex = '999';
+                        confetti.style.animation = 'confettiFall 3s linear forwards';
                         
                         document.body.appendChild(confetti);
-                        
-                        setTimeout(() => confetti.remove(), 5000);
-                    }, i * 20);
+                        setTimeout(() => confetti.remove(), 3000);
+                    }, i * 50);
                 }
             }
             
             playFoundSound() {
-                // Create a pleasant "ding" sound
                 if (typeof AudioContext !== 'undefined' || typeof webkitAudioContext !== 'undefined') {
                     const audioContext = new (AudioContext || webkitAudioContext)();
                     const oscillator = audioContext.createOscillator();
@@ -553,18 +666,17 @@ improve this logic , it does not make much sense , improve the game to something
                     gainNode.connect(audioContext.destination);
                     
                     oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-                    oscillator.frequency.exponentialRampToValueAtTime(1200, audioContext.currentTime + 0.1);
+                    oscillator.frequency.exponentialRampToValueAtTime(1200, audioContext.currentTime + 0.15);
                     
                     gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.1);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
                     
                     oscillator.start(audioContext.currentTime);
-                    oscillator.stop(audioContext.currentTime + 0.1);
+                    oscillator.stop(audioContext.currentTime + 0.15);
                 }
             }
             
             playWrongSound() {
-                // Create a gentle "nope" sound
                 if (typeof AudioContext !== 'undefined' || typeof webkitAudioContext !== 'undefined') {
                     const audioContext = new (AudioContext || webkitAudioContext)();
                     const oscillator = audioContext.createOscillator();
@@ -574,63 +686,72 @@ improve this logic , it does not make much sense , improve the game to something
                     gainNode.connect(audioContext.destination);
                     
                     oscillator.frequency.setValueAtTime(300, audioContext.currentTime);
-                    oscillator.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 0.2);
+                    oscillator.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 0.3);
                     
-                    gainNode.gain.setValueAtTime(0.1, audioContext.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.2);
+                    gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
+                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
                     
                     oscillator.start(audioContext.currentTime);
-                    oscillator.stop(audioContext.currentTime + 0.2);
+                    oscillator.stop(audioContext.currentTime + 0.3);
                 }
             }
         }
 
         // Initialize the game
-        const game = new HeartHuntGame();
+        const game = new HeartPatternGame();
 
-        // Add heart explosion animation
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes heartExplode {
-                0% {
-                    opacity: 1;
-                    transform: translate(-50%, -50%) scale(1) rotate(0deg);
-                }
-                100% {
-                    opacity: 0;
-                    transform: translate(-50%, -50%) 
-                               translate(calc(cos(var(--angle) * 3.14159 / 180) * 60px), calc(sin(var(--angle) * 3.14159 / 180) * 60px))
-                               scale(0.3) rotate(180deg);
-                }
-            }
-        `;
-        document.head.appendChild(style);
-
-        // Add celebration effects to yes button
-        document.querySelector('.yes').addEventListener('click', function(e) {
+        // Global functions
+        function celebrateYes() {
             // Create massive celebration
-            for (let i = 0; i < 30; i++) {
+            const celebrations = ['🎉', '❤️', '💕', '🌟', '💖', '🎊', '✨'];
+            for (let i = 0; i < 50; i++) {
                 setTimeout(() => {
                     const celebration = document.createElement('div');
-                    celebration.innerHTML = ['🎉', '❤️', '💕', '🌟', '💖', '🎊'][Math.floor(Math.random() * 6)];
+                    celebration.innerHTML = celebrations[Math.floor(Math.random() * celebrations.length)];
                     celebration.style.position = 'fixed';
                     celebration.style.left = Math.random() * 100 + '%';
                     celebration.style.top = Math.random() * 100 + '%';
-                    celebration.style.fontSize = '2rem';
+                    celebration.style.fontSize = '3rem';
                     celebration.style.pointerEvents = 'none';
                     celebration.style.zIndex = '9999';
-                    celebration.style.animation = 'celebrationExplode 2s ease-out forwards';
+                    celebration.style.animation = 'celebrationExplode 3s ease-out forwards';
                     
                     document.body.appendChild(celebration);
-                    
-                    setTimeout(() => celebration.remove(), 2000);
+                    setTimeout(() => celebration.remove(), 3000);
                 }, i * 50);
             }
-        });
+            
+            // Navigate to letter page after celebration
+            setTimeout(() => {
+                window.open('letter.html', '_blank');
+            }, 2000);
+        }
 
-        // Add celebration animation
-        const celebrationStyle = document.createElement('style');
-        celebrationStyle.textContent = `
+        // Add additional animations
+        const additionalStyles = document.createElement('style');
+        additionalStyles.textContent = `
+            @keyframes levelComplete {
+                0% {
+                    opacity: 1;
+                    transform: scale(1) rotate(0deg);
+                }
+                100% {
+                    opacity: 0;
+                    transform: scale(2) rotate(360deg) translateY(-200px);
+                }
+            }
+
+            @keyframes confettiFall {
+                0% {
+                    transform: translateY(0) rotate(0deg);
+                    opacity: 1;
+                }
+                100% {
+                    transform: translateY(100vh) rotate(720deg);
+                    opacity: 0;
+                }
+            }
+
             @keyframes celebrationExplode {
                 0% {
                     opacity: 1;
@@ -638,76 +759,38 @@ improve this logic , it does not make much sense , improve the game to something
                 }
                 100% {
                     opacity: 0;
-                    transform: scale(2.5) rotate(720deg) translateY(-300px);
+                    transform: scale(3) rotate(720deg) translateY(-400px);
                 }
             }
         `;
-        document.head.appendChild(celebrationStyle);
+        document.head.appendChild(additionalStyles);
 
-        // Add floating hearts background
-        function createFloatingHeart() {
-            const heart = document.createElement('div');
-            heart.innerHTML = '💕';
-            heart.style.position = 'fixed';
-            heart.style.left = Math.random() * 100 + '%';
-            heart.style.bottom = '-50px';
-            heart.style.fontSize = '1.5rem';
-            heart.style.pointerEvents = 'none';
-            heart.style.zIndex = '1';
-            heart.style.opacity = '0.3';
-            heart.style.animation = 'floatUp 8s linear forwards';
-            
-            document.body.appendChild(heart);
-            
-            setTimeout(() => heart.remove(), 8000);
-        }
-
-        // Add float up animation
-        const floatStyle = document.createElement('style');
-        floatStyle.textContent = `
-            @keyframes floatUp {
-                0% {
-                    transform: translateY(0) rotate(0deg);
-                    opacity: 0.3;
-                }
-                50% {
-                    opacity: 0.6;
-                }
-                100% {
-                    transform: translateY(-100vh) rotate(360deg);
-                    opacity: 0;
-                }
-            }
-        `;
-        document.head.appendChild(floatStyle);
-
-        // Create floating hearts periodically
-        setInterval(createFloatingHeart, 2000);
-
-        // Initial floating hearts
-        for (let i = 0; i < 3; i++) {
-            setTimeout(createFloatingHeart, i * 500);
-        }
-
-        // Close modal when clicking outside
+        // Close modal functionality
         document.getElementById('completionModal').addEventListener('click', function(e) {
             if (e.target === this) {
                 this.style.display = 'none';
             }
         });
 
-        // Prevent accidental page reload
-        window.addEventListener('beforeunload', function(e) {
-            if (!game.gameComplete && game.foundHearts > 0) {
-                e.preventDefault();
-                e.returnValue = '';
-            }
-        });
-
-        // Add keyboard support
+        // Keyboard shortcuts
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && document.getElementById('completionModal').style.display === 'flex') {
-                document.getElementById('completionModal').style.display = 'none';
+            switch(e.key) {
+                case 'Escape':
+                    if (document.getElementById('completionModal').style.display === 'flex') {
+                        document.getElementById('completionModal').style.display = 'none';
+                    }
+                    break;
+                case 'h':
+                case 'H':
+                    game.showHint();
+                    break;
+                case 'r':
+                case 'R':
+                    game.resetLevel();
+                    break;
+                case 'Enter':
+                    game.checkSolution();
+                    break;
             }
         });
     </script>
