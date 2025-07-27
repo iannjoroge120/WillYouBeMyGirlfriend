@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <title>Heart Pattern Puzzle 💕</title>
+    <title>Personal Crossword Puzzle 💕</title>
     <style>
         * {
             margin: 0;
@@ -18,22 +18,18 @@
             min-height: 100vh;
             color: white;
             overflow-x: hidden;
+            padding: 20px;
         }
 
         .game-container {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            position: relative;
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
         }
 
         .game-title {
             font-size: clamp(2rem, 6vw, 3.5rem);
             font-weight: 700;
-            text-align: center;
             margin-bottom: 20px;
             background: linear-gradient(45deg, #ff6b6b, #feca57, #48dbfb);
             -webkit-background-clip: text;
@@ -43,139 +39,132 @@
         }
 
         .game-subtitle {
-            font-size: clamp(0.9rem, 2.5vw, 1.1rem);
-            text-align: center;
+            font-size: 1.2rem;
             margin-bottom: 30px;
             opacity: 0.9;
             max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
             line-height: 1.4;
         }
 
-        .level-info {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            justify-content: center;
+        .puzzle-container {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 30px;
+            margin-bottom: 30px;
+            align-items: start;
         }
 
-        .info-card {
+        .crossword-grid {
             background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            padding: 12px 20px;
-            border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(15px);
+            border-radius: 20px;
+            padding: 30px;
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(15, 1fr);
+            gap: 2px;
+            max-width: 600px;
+            margin: 0 auto 20px;
+        }
+
+        .cell {
+            width: 35px;
+            height: 35px;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            position: relative;
+            background: rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .cell.black {
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .cell.active {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .cell input {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: transparent;
             text-align: center;
+            font-size: 14px;
+            font-weight: bold;
+            color: white;
+            text-transform: uppercase;
         }
 
-        .info-number {
-            font-size: 1.5rem;
-            font-weight: 700;
+        .cell input:focus {
+            outline: 2px solid #feca57;
+            background: rgba(254, 202, 87, 0.2);
+        }
+
+        .cell-number {
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            font-size: 10px;
             color: #feca57;
+            font-weight: bold;
         }
 
-        .info-label {
-            font-size: 0.8rem;
-            opacity: 0.8;
-        }
-
-        .clue-section {
-            background: rgba(255, 255, 255, 0.15);
+        .clues-container {
+            background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(15px);
             border-radius: 20px;
             padding: 25px;
-            margin-bottom: 30px;
             border: 2px solid rgba(255, 255, 255, 0.2);
-            max-width: 500px;
-            text-align: center;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+            text-align: left;
         }
 
-        .clue-title {
+        .clues-section {
+            margin-bottom: 25px;
+        }
+
+        .clues-title {
             font-size: 1.3rem;
             font-weight: 600;
             margin-bottom: 15px;
             color: #feca57;
+            text-align: center;
         }
 
-        .clue-text {
-            font-size: 1rem;
-            line-height: 1.5;
-            margin-bottom: 15px;
-        }
-
-        .clue-grid {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 8px;
-            max-width: 200px;
-            margin: 0 auto;
-        }
-
-        .clue-cell {
-            aspect-ratio: 1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            background: rgba(255, 255, 255, 0.2);
+        .clue {
+            margin-bottom: 8px;
+            padding: 8px;
             border-radius: 8px;
-            font-size: 1.2rem;
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .puzzle-grid {
-            display: grid;
-            grid-template-columns: repeat(6, 1fr);
-            gap: 12px;
-            max-width: 420px;
-            width: 100%;
-            margin-bottom: 30px;
-        }
-
-        .puzzle-cell {
-            aspect-ratio: 1;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 12px;
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.8rem;
+            transition: background 0.3s ease;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            position: relative;
-            overflow: hidden;
         }
 
-        .puzzle-cell:hover {
-            transform: scale(1.05);
-            background: rgba(255, 255, 255, 0.2);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        .clue:hover {
+            background: rgba(255, 255, 255, 0.1);
         }
 
-        .puzzle-cell.revealed {
-            background: linear-gradient(135deg, #56ab2f, #a8e6cf);
-            transform: scale(1.02);
-            animation: revealPulse 0.6s ease-out;
-        }
-
-        .puzzle-cell.heart {
-            background: linear-gradient(135deg, #ff6b6b, #ff8a80);
-            animation: heartFound 0.8s ease-out;
-        }
-
-        .puzzle-cell.wrong {
-            background: linear-gradient(135deg, #ff5722, #ff8a65);
-            animation: shake 0.5s ease-out;
+        .clue.active {
+            background: rgba(254, 202, 87, 0.2);
+            border-left: 3px solid #feca57;
         }
 
         .controls {
             display: flex;
             gap: 15px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
             justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
         }
 
         .btn {
@@ -211,7 +200,6 @@
             align-items: center;
             justify-content: center;
             z-index: 1000;
-            animation: fadeIn 0.5s ease-out;
         }
 
         .modal-content {
@@ -263,39 +251,26 @@
             background: linear-gradient(135deg, #ff6b6b, #ffa500);
         }
 
-        .no:hover {
-            transform: scale(0.95);
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            margin-bottom: 20px;
+            overflow: hidden;
         }
 
-        /* Animations */
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #56ab2f, #a8e6cf);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+            width: 0%;
+        }
+
         @keyframes gradientShift {
             0%, 100% { background-position: 0% 50%; }
             50% { background-position: 100% 50%; }
-        }
-
-        @keyframes revealPulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.15); }
-            100% { transform: scale(1.02); }
-        }
-
-        @keyframes heartFound {
-            0% { transform: scale(1); }
-            25% { transform: scale(1.2) rotate(-5deg); }
-            50% { transform: scale(1.3) rotate(5deg); }
-            75% { transform: scale(1.1) rotate(-2deg); }
-            100% { transform: scale(1.02) rotate(0deg); }
-        }
-
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            25% { transform: translateX(-8px); }
-            75% { transform: translateX(8px); }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
         }
 
         @keyframes modalAppear {
@@ -317,77 +292,65 @@
             70% { transform: scale(1); }
         }
 
-        /* Responsive Design */
+        @media (max-width: 1000px) {
+            .puzzle-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .cell {
+                width: 25px;
+                height: 25px;
+                font-size: 12px;
+            }
+            
+            .grid {
+                max-width: 400px;
+            }
+        }
+
         @media (max-width: 600px) {
-            .puzzle-grid {
-                gap: 8px;
-                max-width: 350px;
+            .cell {
+                width: 20px;
+                height: 20px;
+                font-size: 10px;
             }
-
-            .level-info {
-                gap: 10px;
-            }
-
-            .info-card {
-                padding: 8px 15px;
-            }
-
-            .clue-section {
-                padding: 20px 15px;
-            }
-
-            .modal-content {
-                padding: 30px 20px;
-            }
-
-            .modal-buttons {
-                flex-direction: column;
-                align-items: center;
-            }
-
-            .btn {
-                width: 100%;
-                max-width: 200px;
+            
+            .grid {
+                max-width: 320px;
             }
         }
     </style>
 </head>
 <body>
     <div class="game-container">
-        <h1 class="game-title">Heart Pattern Puzzle 💕</h1>
-        <p class="game-subtitle">Use logic and pattern recognition to find all the hearts! Each level gives you clues about where hearts are hidden.</p>
+        <h1 class="game-title">Personal Crossword Puzzle 💕</h1>
+        <p class="game-subtitle">Solve this crossword about me to unlock a special message! Each clue reveals something personal about who I am.</p>
         
-        <div class="level-info">
-            <div class="info-card">
-                <div class="info-number" id="currentLevel">1</div>
-                <div class="info-label">Level</div>
-            </div>
-            <div class="info-card">
-                <div class="info-number" id="heartsFound">0</div>
-                <div class="info-label">Hearts Found</div>
-            </div>
-            <div class="info-card">
-                <div class="info-number" id="totalHearts">4</div>
-                <div class="info-label">Hearts Hidden</div>
-            </div>
-            <div class="info-card">
-                <div class="info-number" id="attempts">0</div>
-                <div class="info-label">Attempts</div>
-            </div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill"></div>
         </div>
         
-        <div class="clue-section">
-            <div class="clue-title">🔍 Pattern Clue</div>
-            <div class="clue-text" id="clueText">Hearts are hidden in corners of the grid</div>
-            <div class="clue-grid" id="clueGrid"></div>
-        </div>
-        
-        <div class="puzzle-grid" id="puzzleGrid"></div>
-        
-        <div class="controls">
-            <button class="btn" onclick="game.showHint()">💡 Hint</button>
-            <button class="btn" onclick="game.resetLevel()">🔄 Reset Level</button>
-            <button class="btn primary" onclick="game.checkSolution()">✓ Check Solution</button>
+        <div class="puzzle-container">
+            <div class="crossword-grid">
+                <div class="grid" id="crosswordGrid"></div>
+                <div class="controls">
+                    <button class="btn" onclick="game.giveHint()">💡 Hint</button>
+                    <button class="btn" onclick="game.clearGrid()">🔄 Clear</button>
+                    <button class="btn primary" onclick="game.checkCompletion()">✓ Check</button>
+                </div>
+            </div>
+            
+            <div class="clues-container">
+                <div class="clues-section">
+                    <div class="clues-title">🔍 Across</div>
+                    <div id="acrossClues"></div>
+                </div>
+                <div class="clues-section">
+                    <div class="clues-title">🔍 Down</div>
+                    <div id="downClues"></div>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -395,247 +358,330 @@
     <div class="completion-modal" id="completionModal">
         <div class="modal-content">
             <h2 class="modal-title">Amazing! 🎉</h2>
-            <p class="modal-message" id="modalMessage">
-                You've solved all the puzzles with your brilliant mind!<br><br>
-                <strong>"Leila, just like these puzzles, you make me think, smile, and feel complete. Will you be my girlfriend?"</strong>
+            <p class="modal-message">
+                You know me so well! 💕<br><br>
+                <strong>"Leila, just like this crossword, you complete me perfectly. Every clue led to you. Will you be my girlfriend?"</strong>
             </p>
             <div class="modal-buttons">
                 <button class="btn yes" onclick="celebrateYes()">Yes! I'd love to! ❤️</button>
-                <button class="btn no" onclick="window.open('no.html', '_blank')">Let me think about it 💭</button>
+                <button class="btn no" onclick="showThinkingMessage()">Let me think about it 💭</button>
             </div>
         </div>
     </div>
 
     <script>
-        class HeartPatternGame {
+        class PersonalCrossword {
             constructor() {
-                this.currentLevel = 1;
-                this.maxLevel = 5;
-                this.gridSize = 36; // 6x6 grid
-                this.attempts = 0;
-                this.heartsFound = 0;
-                this.gameComplete = false;
+                this.gridSize = 15;
+                this.currentDirection = 'across';
+                this.currentClue = null;
+                this.grid = Array(this.gridSize).fill().map(() => Array(this.gridSize).fill(null));
                 this.hintsUsed = 0;
                 
-                this.levels = [
-                    {
-                        hearts: [0, 5, 30, 35], // Corners
-                        clue: "Hearts are hidden in the four corners of the grid",
-                        cluePattern: [
-                            '❤️', '', '', '❤️',
-                            '', '', '', '',
-                            '', '', '', '',
-                            '❤️', '', '', '❤️'
-                        ]
-                    },
-                    {
-                        hearts: [7, 10, 25, 28], // Plus pattern center
-                        clue: "Hearts form a perfect plus (+) sign in the center",
-                        cluePattern: [
-                            '', '❤️', '', '',
-                            '❤️', '❤️', '❤️', '',
-                            '', '❤️', '', '',
-                            '', '', '', ''
-                        ]
-                    },
-                    {
-                        hearts: [1, 4, 31, 34], // Diamond pattern
-                        clue: "Hearts create a diamond shape when connected",
-                        cluePattern: [
-                            '', '❤️', '', '',
-                            '', '', '', '',
-                            '', '', '', '',
-                            '❤️', '', '❤️', ''
-                        ]
-                    },
-                    {
-                        hearts: [14, 15, 20, 21], // 2x2 square center
-                        clue: "Hearts form a perfect 2×2 square in the center",
-                        cluePattern: [
-                            '', '', '', '',
-                            '', '❤️', '❤️', '',
-                            '', '❤️', '❤️', '',
-                            '', '', '', ''
-                        ]
-                    },
-                    {
-                        hearts: [6, 11, 24, 29], // X pattern
-                        clue: "Hearts form an X pattern across the grid",
-                        cluePattern: [
-                            '', '❤️', '', '❤️',
-                            '', '', '', '',
-                            '', '', '', '',
-                            '❤️', '', '❤️', ''
-                        ]
-                    }
-                ];
+                // Define the crossword layout and answers
+                this.words = {
+                    // Across
+                    1: { answer: 'ELDORET', start: [1, 4], direction: 'across', clue: 'My hometown, known for producing world-class runners' },
+                    4: { answer: 'APPLE', start: [4, 2], direction: 'across', clue: 'My dream company to work for' },
+                    6: { answer: 'PIXEL', start: [6, 5], direction: 'across', clue: 'American-owned phone brand that sells millions of units yearly' },
+                    8: { answer: 'LONDON', start: [8, 1], direction: 'across', clue: 'My dream city to live in' },
+                    10: { answer: 'SPACEX', start: [10, 4], direction: 'across', clue: 'Elon Musk\'s space company I admire' },
+                    
+                    // Down
+                    2: { answer: 'COMPUTER', start: [2, 3], direction: 'down', clue: 'My field of study combined with Science' },
+                    3: { answer: 'THURSDAY', start: [0, 8], direction: 'down', clue: 'The day of the week I was born' },
+                    7: { answer: 'XIAOMI', start: [5, 7], direction: 'down', clue: 'Brand of my dream car model SU7' },
+                    9: { answer: 'SPACE', start: [7, 9], direction: 'down', clue: 'What fascinates me beyond Earth' },
+                    11: { answer: 'FOUR', start: [9, 12], direction: 'down', clue: 'Number of siblings in my family' }
+                };
                 
                 this.init();
             }
             
             init() {
                 this.createGrid();
-                this.updateStats();
-                this.showLevelClue();
+                this.createClues();
+                this.setupEventListeners();
+                this.updateProgress();
             }
             
             createGrid() {
-                const grid = document.getElementById('puzzleGrid');
-                grid.innerHTML = '';
+                const gridElement = document.getElementById('crosswordGrid');
+                gridElement.innerHTML = '';
                 
-                for (let i = 0; i < this.gridSize; i++) {
-                    const cell = document.createElement('div');
-                    cell.className = 'puzzle-cell';
-                    cell.dataset.index = i;
-                    cell.innerHTML = '?';
-                    
-                    cell.addEventListener('click', () => this.handleCellClick(cell, i));
-                    grid.appendChild(cell);
+                // Initialize all cells as black
+                for (let i = 0; i < this.gridSize * this.gridSize; i++) {
+                    const row = Math.floor(i / this.gridSize);
+                    const col = i % this.gridSize;
+                    this.grid[row][col] = { type: 'black', letter: '', number: null };
                 }
-            }
-            
-            handleCellClick(cell, index) {
-                if (this.gameComplete || cell.classList.contains('revealed')) return;
                 
-                this.attempts++;
-                const currentLevel = this.levels[this.currentLevel - 1];
-                
-                if (currentLevel.hearts.includes(index)) {
-                    cell.classList.add('revealed', 'heart');
-                    cell.innerHTML = '❤️';
-                    this.heartsFound++;
-                    this.playFoundSound();
-                    
-                    if (this.heartsFound === currentLevel.hearts.length) {
-                        setTimeout(() => this.completeLevel(), 800);
+                // Mark word positions
+                Object.entries(this.words).forEach(([num, word]) => {
+                    const [startRow, startCol] = word.start;
+                    for (let i = 0; i < word.answer.length; i++) {
+                        const row = word.direction === 'across' ? startRow : startRow + i;
+                        const col = word.direction === 'across' ? startCol + i : startCol;
+                        
+                        if (this.grid[row][col].type === 'black') {
+                            this.grid[row][col] = { type: 'white', letter: '', number: null };
+                        }
+                        
+                        // Add number to first cell
+                        if (i === 0) {
+                            this.grid[row][col].number = parseInt(num);
+                        }
                     }
-                } else {
-                    cell.classList.add('wrong');
-                    cell.innerHTML = '💔';
-                    this.playWrongSound();
-                    
-                    setTimeout(() => {
-                        cell.classList.remove('wrong');
-                        cell.innerHTML = '?';
-                    }, 1000);
-                }
+                });
                 
-                this.updateStats();
+                // Create DOM elements
+                for (let row = 0; row < this.gridSize; row++) {
+                    for (let col = 0; col < this.gridSize; col++) {
+                        const cell = document.createElement('div');
+                        cell.className = 'cell';
+                        cell.dataset.row = row;
+                        cell.dataset.col = col;
+                        
+                        if (this.grid[row][col].type === 'black') {
+                            cell.classList.add('black');
+                        } else {
+                            const input = document.createElement('input');
+                            input.maxLength = 1;
+                            input.addEventListener('input', (e) => this.handleInput(e, row, col));
+                            input.addEventListener('focus', () => this.handleFocus(row, col));
+                            input.addEventListener('keydown', (e) => this.handleKeydown(e, row, col));
+                            cell.appendChild(input);
+                            
+                            if (this.grid[row][col].number) {
+                                const number = document.createElement('div');
+                                number.className = 'cell-number';
+                                number.textContent = this.grid[row][col].number;
+                                cell.appendChild(number);
+                            }
+                        }
+                        
+                        gridElement.appendChild(cell);
+                    }
+                }
             }
             
-            showLevelClue() {
-                const currentLevel = this.levels[this.currentLevel - 1];
-                document.getElementById('clueText').textContent = currentLevel.clue;
+            createClues() {
+                const acrossClues = document.getElementById('acrossClues');
+                const downClues = document.getElementById('downClues');
                 
-                const clueGrid = document.getElementById('clueGrid');
-                clueGrid.innerHTML = '';
+                acrossClues.innerHTML = '';
+                downClues.innerHTML = '';
                 
-                currentLevel.cluePattern.forEach(symbol => {
-                    const cell = document.createElement('div');
-                    cell.className = 'clue-cell';
-                    cell.innerHTML = symbol || '·';
-                    clueGrid.appendChild(cell);
+                Object.entries(this.words).forEach(([num, word]) => {
+                    const clueElement = document.createElement('div');
+                    clueElement.className = 'clue';
+                    clueElement.dataset.number = num;
+                    clueElement.dataset.direction = word.direction;
+                    clueElement.innerHTML = `<strong>${num}.</strong> ${word.clue}`;
+                    clueElement.addEventListener('click', () => this.selectClue(num, word.direction));
+                    
+                    if (word.direction === 'across') {
+                        acrossClues.appendChild(clueElement);
+                    } else {
+                        downClues.appendChild(clueElement);
+                    }
                 });
             }
             
-            showHint() {
-                if (this.hintsUsed >= 2) {
-                    alert('No more hints available for this level!');
+            handleInput(e, row, col) {
+                const value = e.target.value.toUpperCase();
+                this.grid[row][col].letter = value;
+                
+                if (value && this.currentClue) {
+                    this.moveToNextCell(row, col);
+                }
+                
+                this.updateProgress();
+                this.checkCompletion();
+            }
+            
+            handleFocus(row, col) {
+                this.findAndSelectClue(row, col);
+            }
+            
+            handleKeydown(e, row, col) {
+                if (e.key === 'Backspace' && !e.target.value) {
+                    this.moveToPreviousCell(row, col);
+                } else if (e.key === 'Tab') {
+                    e.preventDefault();
+                    this.switchDirection();
+                }
+            }
+            
+            findAndSelectClue(row, col) {
+                for (const [num, word] of Object.entries(this.words)) {
+                    const [startRow, startCol] = word.start;
+                    const endRow = word.direction === 'across' ? startRow : startRow + word.answer.length - 1;
+                    const endCol = word.direction === 'across' ? startCol + word.answer.length - 1 : startCol;
+                    
+                    if (word.direction === 'across' && row === startRow && col >= startCol && col <= endCol) {
+                        this.selectClue(num, 'across');
+                        return;
+                    } else if (word.direction === 'down' && col === startCol && row >= startRow && row <= endRow) {
+                        this.selectClue(num, 'down');
+                        return;
+                    }
+                }
+            }
+            
+            selectClue(number, direction) {
+                // Remove previous selection
+                document.querySelectorAll('.clue.active').forEach(el => el.classList.remove('active'));
+                document.querySelectorAll('.cell.active').forEach(el => el.classList.remove('active'));
+                
+                // Add new selection
+                const clueElement = document.querySelector(`[data-number="${number}"][data-direction="${direction}"]`);
+                if (clueElement) {
+                    clueElement.classList.add('active');
+                }
+                
+                this.currentClue = { number, direction };
+                this.currentDirection = direction;
+                
+                // Highlight cells for this word
+                const word = this.words[number];
+                const [startRow, startCol] = word.start;
+                for (let i = 0; i < word.answer.length; i++) {
+                    const row = direction === 'across' ? startRow : startRow + i;
+                    const col = direction === 'across' ? startCol + i : startCol;
+                    const cell = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+                    if (cell) {
+                        cell.classList.add('active');
+                    }
+                }
+            }
+            
+            moveToNextCell(row, col) {
+                if (!this.currentClue) return;
+                
+                const word = this.words[this.currentClue.number];
+                const [startRow, startCol] = word.start;
+                const direction = word.direction;
+                
+                const nextRow = direction === 'across' ? row : row + 1;
+                const nextCol = direction === 'across' ? col + 1 : col;
+                
+                const nextCell = document.querySelector(`[data-row="${nextRow}"][data-col="${nextCol}"] input`);
+                if (nextCell) {
+                    nextCell.focus();
+                }
+            }
+            
+            moveToPreviousCell(row, col) {
+                if (!this.currentClue) return;
+                
+                const word = this.words[this.currentClue.number];
+                const direction = word.direction;
+                
+                const prevRow = direction === 'across' ? row : row - 1;
+                const prevCol = direction === 'across' ? col - 1 : col;
+                
+                const prevCell = document.querySelector(`[data-row="${prevRow}"][data-col="${prevCol}"] input`);
+                if (prevCell) {
+                    prevCell.focus();
+                }
+            }
+            
+            switchDirection() {
+                this.currentDirection = this.currentDirection === 'across' ? 'down' : 'across';
+            }
+            
+            giveHint() {
+                if (this.hintsUsed >= 3) {
+                    alert('No more hints available! 🤔');
                     return;
                 }
                 
-                const currentLevel = this.levels[this.currentLevel - 1];
-                const unrevealedHearts = currentLevel.hearts.filter(index => {
-                    const cell = document.querySelector(`[data-index="${index}"]`);
-                    return !cell.classList.contains('revealed');
+                const hintMessages = [
+                    "💡 Think about personal details: my hometown, birth date, dreams, and interests!",
+                    "💡 Consider technology I use, companies I admire, and places I want to visit!",
+                    "💡 Remember: some answers are about my family, my studies, and things that fascinate me!"
+                ];
+                
+                alert(hintMessages[this.hintsUsed] || hintMessages[0]);
+                this.hintsUsed++;
+            }
+            
+            clearGrid() {
+                if (confirm('Are you sure you want to clear the entire grid?')) {
+                    document.querySelectorAll('.cell input').forEach(input => {
+                        input.value = '';
+                    });
+                    
+                    for (let row = 0; row < this.gridSize; row++) {
+                        for (let col = 0; col < this.gridSize; col++) {
+                            if (this.grid[row][col].type === 'white') {
+                                this.grid[row][col].letter = '';
+                            }
+                        }
+                    }
+                    
+                    this.updateProgress();
+                }
+            }
+            
+            updateProgress() {
+                let totalCells = 0;
+                let filledCells = 0;
+                
+                for (let row = 0; row < this.gridSize; row++) {
+                    for (let col = 0; col < this.gridSize; col++) {
+                        if (this.grid[row][col].type === 'white') {
+                            totalCells++;
+                            if (this.grid[row][col].letter) {
+                                filledCells++;
+                            }
+                        }
+                    }
+                }
+                
+                const progress = totalCells > 0 ? (filledCells / totalCells) * 100 : 0;
+                document.getElementById('progressFill').style.width = progress + '%';
+            }
+            
+            checkCompletion() {
+                let allCorrect = true;
+                
+                Object.entries(this.words).forEach(([num, word]) => {
+                    const [startRow, startCol] = word.start;
+                    let currentWord = '';
+                    
+                    for (let i = 0; i < word.answer.length; i++) {
+                        const row = word.direction === 'across' ? startRow : startRow + i;
+                        const col = word.direction === 'across' ? startCol + i : startCol;
+                        currentWord += this.grid[row][col].letter || '';
+                    }
+                    
+                    if (currentWord !== word.answer) {
+                        allCorrect = false;
+                    }
                 });
                 
-                if (unrevealedHearts.length > 0) {
-                    const hintIndex = unrevealedHearts[Math.floor(Math.random() * unrevealedHearts.length)];
-                    const hintCell = document.querySelector(`[data-index="${hintIndex}"]`);
-                    
-                    hintCell.style.background = 'linear-gradient(135deg, #feca57, #ff9ff3)';
-                    hintCell.innerHTML = '💡';
-                    
+                if (allCorrect && this.isGridComplete()) {
                     setTimeout(() => {
-                        hintCell.style.background = '';
-                        hintCell.innerHTML = '?';
-                    }, 3000);
-                    
-                    this.hintsUsed++;
+                        document.getElementById('completionModal').style.display = 'flex';
+                        this.createCelebration();
+                    }, 500);
                 }
             }
             
-            checkSolution() {
-                const currentLevel = this.levels[this.currentLevel - 1];
-                const revealedCells = document.querySelectorAll('.puzzle-cell.revealed');
-                
-                if (revealedCells.length === currentLevel.hearts.length) {
-                    this.completeLevel();
-                } else {
-                    alert(`Find ${currentLevel.hearts.length - revealedCells.length} more hearts!`);
+            isGridComplete() {
+                for (let row = 0; row < this.gridSize; row++) {
+                    for (let col = 0; col < this.gridSize; col++) {
+                        if (this.grid[row][col].type === 'white' && !this.grid[row][col].letter) {
+                            return false;
+                        }
+                    }
                 }
+                return true;
             }
             
-            completeLevel() {
-                if (this.currentLevel >= this.maxLevel) {
-                    this.completeGame();
-                } else {
-                    setTimeout(() => {
-                        this.currentLevel++;
-                        this.heartsFound = 0;
-                        this.hintsUsed = 0;
-                        this.createGrid();
-                        this.updateStats();
-                        this.showLevelClue();
-                        this.createLevelCompleteEffect();
-                    }, 1500);
-                }
-            }
-            
-            completeGame() {
-                this.gameComplete = true;
-                setTimeout(() => {
-                    document.getElementById('completionModal').style.display = 'flex';
-                    this.createConfetti();
-                }, 1000);
-            }
-            
-            resetLevel() {
-                this.heartsFound = 0;
-                this.hintsUsed = 0;
-                this.createGrid();
-                this.updateStats();
-            }
-            
-            updateStats() {
-                document.getElementById('currentLevel').textContent = this.currentLevel;
-                document.getElementById('heartsFound').textContent = this.heartsFound;
-                document.getElementById('totalHearts').textContent = this.levels[this.currentLevel - 1].hearts.length;
-                document.getElementById('attempts').textContent = this.attempts;
-            }
-            
-            createLevelCompleteEffect() {
-                const effects = ['🎉', '⭐', '✨', '💫', '🌟'];
-                for (let i = 0; i < 15; i++) {
-                    setTimeout(() => {
-                        const effect = document.createElement('div');
-                        effect.innerHTML = effects[Math.floor(Math.random() * effects.length)];
-                        effect.style.position = 'fixed';
-                        effect.style.left = Math.random() * 100 + '%';
-                        effect.style.top = Math.random() * 100 + '%';
-                        effect.style.fontSize = '2rem';
-                        effect.style.pointerEvents = 'none';
-                        effect.style.zIndex = '999';
-                        effect.style.animation = 'levelComplete 2s ease-out forwards';
-                        
-                        document.body.appendChild(effect);
-                        setTimeout(() => effect.remove(), 2000);
-                    }, i * 100);
-                }
-            }
-            
-            createConfetti() {
+            createCelebration() {
                 const colors = ['#ff6b6b', '#feca57', '#48dbfb', '#ff9ff3', '#56ab2f'];
                 for (let i = 0; i < 50; i++) {
                     setTimeout(() => {
@@ -648,6 +694,7 @@
                         confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
                         confetti.style.pointerEvents = 'none';
                         confetti.style.zIndex = '999';
+                        confetti.style.transform = 'rotate(' + Math.random() * 360 + 'deg)';
                         confetti.style.animation = 'confettiFall 3s linear forwards';
                         
                         document.body.appendChild(confetti);
@@ -656,55 +703,30 @@
                 }
             }
             
-            playFoundSound() {
-                if (typeof AudioContext !== 'undefined' || typeof webkitAudioContext !== 'undefined') {
-                    const audioContext = new (AudioContext || webkitAudioContext)();
-                    const oscillator = audioContext.createOscillator();
-                    const gainNode = audioContext.createGain();
-                    
-                    oscillator.connect(gainNode);
-                    gainNode.connect(audioContext.destination);
-                    
-                    oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
-                    oscillator.frequency.exponentialRampToValueAtTime(1200, audioContext.currentTime + 0.15);
-                    
-                    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.15);
-                    
-                    oscillator.start(audioContext.currentTime);
-                    oscillator.stop(audioContext.currentTime + 0.15);
-                }
-            }
-            
-            playWrongSound() {
-                if (typeof AudioContext !== 'undefined' || typeof webkitAudioContext !== 'undefined') {
-                    const audioContext = new (AudioContext || webkitAudioContext)();
-                    const oscillator = audioContext.createOscillator();
-                    const gainNode = audioContext.createGain();
-                    
-                    oscillator.connect(gainNode);
-                    gainNode.connect(audioContext.destination);
-                    
-                    oscillator.frequency.setValueAtTime(300, audioContext.currentTime);
-                    oscillator.frequency.exponentialRampToValueAtTime(200, audioContext.currentTime + 0.3);
-                    
-                    gainNode.gain.setValueAtTime(0.2, audioContext.currentTime);
-                    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.3);
-                    
-                    oscillator.start(audioContext.currentTime);
-                    oscillator.stop(audioContext.currentTime + 0.3);
-                }
+            setupEventListeners() {
+                // Modal close functionality
+                document.getElementById('completionModal').addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        this.style.display = 'none';
+                    }
+                });
+                
+                // Keyboard shortcuts
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && document.getElementById('completionModal').style.display === 'flex') {
+                        document.getElementById('completionModal').style.display = 'none';
+                    }
+                });
             }
         }
 
         // Initialize the game
-        const game = new HeartPatternGame();
+        const game = new PersonalCrossword();
 
         // Global functions
         function celebrateYes() {
-            // Create massive celebration
             const celebrations = ['🎉', '❤️', '💕', '🌟', '💖', '🎊', '✨'];
-            for (let i = 0; i < 50; i++) {
+            for (let i = 0; i < 30; i++) {
                 setTimeout(() => {
                     const celebration = document.createElement('div');
                     celebration.innerHTML = celebrations[Math.floor(Math.random() * celebrations.length)];
@@ -714,33 +736,25 @@
                     celebration.style.fontSize = '3rem';
                     celebration.style.pointerEvents = 'none';
                     celebration.style.zIndex = '9999';
-                    celebration.style.animation = 'celebrationExplode 3s ease-out forwards';
+                    celebration.style.animation = 'celebrationBounce 3s ease-out forwards';
                     
                     document.body.appendChild(celebration);
                     setTimeout(() => celebration.remove(), 3000);
-                }, i * 50);
+                }, i * 100);
             }
             
-            // Navigate to letter page after celebration
             setTimeout(() => {
-                window.open('letter.html', '_blank');
+                alert('🎉❤️ YES!!! This is the beginning of something amazing! I love you! ❤️🎉');
             }, 2000);
         }
 
-        // Add additional animations
-        const additionalStyles = document.createElement('style');
-        additionalStyles.textContent = `
-            @keyframes levelComplete {
-                0% {
-                    opacity: 1;
-                    transform: scale(1) rotate(0deg);
-                }
-                100% {
-                    opacity: 0;
-                    transform: scale(2) rotate(360deg) translateY(-200px);
-                }
-            }
+        function showThinkingMessage() {
+            alert('Take all the time you need... but I hope you know how much you mean to me! 💕');
+        }
 
+        // Additional CSS animations
+        const style = document.createElement('style');
+        style.textContent = `
             @keyframes confettiFall {
                 0% {
                     transform: translateY(0) rotate(0deg);
@@ -751,48 +765,22 @@
                     opacity: 0;
                 }
             }
-
-            @keyframes celebrationExplode {
+            
+            @keyframes celebrationBounce {
                 0% {
                     opacity: 1;
                     transform: scale(1) rotate(0deg);
                 }
+                50% {
+                    transform: scale(1.5) rotate(180deg);
+                }
                 100% {
                     opacity: 0;
-                    transform: scale(3) rotate(720deg) translateY(-400px);
+                    transform: scale(2) rotate(360deg) translateY(-200px);
                 }
             }
         `;
-        document.head.appendChild(additionalStyles);
-
-        // Close modal functionality
-        document.getElementById('completionModal').addEventListener('click', function(e) {
-            if (e.target === this) {
-                this.style.display = 'none';
-            }
-        });
-
-        // Keyboard shortcuts
-        document.addEventListener('keydown', function(e) {
-            switch(e.key) {
-                case 'Escape':
-                    if (document.getElementById('completionModal').style.display === 'flex') {
-                        document.getElementById('completionModal').style.display = 'none';
-                    }
-                    break;
-                case 'h':
-                case 'H':
-                    game.showHint();
-                    break;
-                case 'r':
-                case 'R':
-                    game.resetLevel();
-                    break;
-                case 'Enter':
-                    game.checkSolution();
-                    break;
-            }
-        });
+        document.head.appendChild(style);
     </script>
 </body>
 </html>
